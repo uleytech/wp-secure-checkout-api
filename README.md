@@ -1,1 +1,2 @@
-# wp-secure-checkout-api
+# Secure Checkout API
+WooCommerce Secure Checkout API
