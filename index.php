@@ -61,8 +61,8 @@ function action_woocommerce_checkout_api($order_id)
     $url = dirname(set_url_scheme('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']));
     $order = wc_get_order($order_id);
 
-//    print_r($order->get_data());
-//    print_r($order->get_items());
+    print_r($order->get_data());
+    print_r($order->get_items());
 
     $payment = $order->get_payment_method();
     $paymentData = [];
@@ -83,7 +83,7 @@ function action_woocommerce_checkout_api($order_id)
 //              $paymentData['card_cvv'] => '332',
 //            break;
     }
-    $orderData = $order->get_data();
+//    $orderData = $order->get_data();
     $productsData = [
         'products' => getProducts($order->get_items()),
     ];
