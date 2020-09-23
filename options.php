@@ -23,7 +23,7 @@ function sca_render_plugin_settings_page()
 function sca_register_settings()
 {
     register_setting('wp_secure_checkout_api_options', 'wp_secure_checkout_api_options', 'wp_secure_checkout_api_options_validate');
-    add_settings_section('api_settings', 'ID Settings', 'wp_secure_checkout_api_section_text', 'wp_secure_checkout_api');
+    add_settings_section('api_settings', 'API Settings', 'wp_secure_checkout_api_section_text', 'wp_secure_checkout_api');
     add_settings_field('wp_secure_checkout_api_setting_api_key', 'API Key', 'wp_secure_checkout_api_setting_api_key', 'wp_secure_checkout_api', 'api_settings');
 }
 
