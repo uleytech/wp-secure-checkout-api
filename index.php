@@ -22,10 +22,9 @@ function getProducts($data)
     foreach ($data as $itemId => $item) {
 //        $itemData = $item->get_data();
         $product = $item->get_product();
-//        $uuid = $product->get_sku();
 //        $qty = $product->get_quantity();
         $items[] = [
-            'qty' => $product->get_quantity(),
+            'qty' => $item['quantity'],
             'uuid' => $product->get_sku(),
         ];
     }
@@ -92,13 +91,13 @@ function action_woocommerce_checkout_api($order_id)
         'payment_last_name' => $order->get_billing_last_name(),
         'payment_address' => $order->get_billing_address_1() . ' ' . $order->get_billing_address_2(),
         'payment_city' => $order->get_billing_city(),
-        'payment_country' => $order->get_billing_state(),
+        'payment_country' => $order->get_billing_country(),
         'payment_postal_code' => $order->get_billing_postcode(),
     ];
     $shippingData = [
         'shipping_first_name' => $order->get_shipping_first_name(),
         'shipping_last_name' => $order->get_shipping_last_name(),
-        'shipping_country' => $order->get_shipping_state(),
+        'shipping_country' => $order->get_shipping_country(),
         'shipping_city' => $order->get_shipping_city(),
         'shipping_address' => $order->get_shipping_address_1() . ' ' .  $order->get_shipping_address_2(),
         'shipping_postal_code' => $order->get_shipping_postcode(),
