@@ -1,10 +1,12 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.1.
- * Description: Provides functionality for WordPress theme.
+ * Version: 1.0.2.
+ * Description: Provides functionality for WordPress WooCommerce.
  * License: MIT
  */
+
+require_once(__DIR__ . '/options.php');
 
 /**
  * @param $data
@@ -29,7 +31,8 @@ function getProducts($data)
  */
 function newSale(array $data)
 {
-    $apiToken = '2e1f76f32f16ddecce3c524fa57c8c411a8ff706';
+    $options = get_option('wp_secure_checkout_api');
+    $apiToken = esc_attr($options['api_key']);
     $apiUrl = 'https://restrict.ax.megadevs.xyz/api';
 
     $ch = curl_init();
