@@ -1,13 +1,13 @@
 <?php
 
-function add_settings_page()
+function sca_add_settings_page()
 {
-    add_options_page('Secure Checkout API', 'Secure Checkout API', 'manage_options', 'wp-secure-checkout-api', 'render_plugin_settings_page');
+    add_options_page('Secure Checkout API', 'Secure Checkout API', 'manage_options', 'wp-secure-checkout-api', 'sca_render_plugin_settings_page');
 }
 
-add_action('admin_menu', 'add_settings_page');
+add_action('admin_menu', 'sca_add_settings_page');
 
-function render_plugin_settings_page()
+function sca_render_plugin_settings_page()
 {
     ?>
     <h2>Secure Checkout API Settings</h2>
@@ -20,14 +20,14 @@ function render_plugin_settings_page()
     <?php
 }
 
-function register_settings()
+function sca_register_settings()
 {
     register_setting('wp_secure_checkout_api_options', 'wp_secure_checkout_api_options', 'wp_secure_checkout_api_options_validate');
     add_settings_section('api_settings', 'ID Settings', 'wp_secure_checkout_api_section_text', 'wp_secure_checkout_api');
     add_settings_field('wp_secure_checkout_api_setting_api_key', 'API Key', 'wp_secure_checkout_api_setting_api_key', 'wp_secure_checkout_api', 'api_settings');
 }
 
-add_action('admin_init', 'register_settings');
+add_action('admin_init', 'sca_register_settings');
 
 function wp_secure_checkout_api_options_validate($input)
 {
