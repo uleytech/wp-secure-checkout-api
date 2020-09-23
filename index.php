@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.0.
+ * Version: 1.0.1.
  * Description: Provides functionality for WordPress theme.
  * License: MIT
  */
@@ -108,9 +108,9 @@ function action_woocommerce_checkout_api($order_id)
         'coefficient' => 1,
     ];
     $data = array_merge($mainData, $billingData, $shippingData, $productsData, $paymentData);
-    print_r($data);
+//    print_r($data);
     $sale = newSale($data);
-    print_r($sale);
+//    print_r($sale);
 
 }
 
