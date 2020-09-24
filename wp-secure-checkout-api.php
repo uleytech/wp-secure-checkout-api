@@ -60,29 +60,28 @@ function action_woocommerce_checkout_api($order_id)
     $url = dirname(set_url_scheme('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']));
     $order = wc_get_order($order_id);
 
-//    print_r($order->get_data());
+    print_r($order->get_data());
 //    print_r($order->get_items());
 
-    echo $payment = $order->get_payment_method();
+    $payment = $order->get_payment_method();
     $paymentData = [];
     switch ($payment) {
         case 'bacs':
         default:
             $paymentData['payment_method'] = 2;
             break;
-//        case 'PayPal':
-//            $paymentData['payment_method'] = 1;
-//              $paymentData['pay_pal_email'] => '1@1.cc',
-//            break;
-//        case 'CreditCard':
-//              $paymentData['payment_method'] = 3;
-//              $paymentData['card_number'] => '41111',
-//              $paymentData['card_expire_month'] => '05',
-//              $paymentData['card_expire_year'] => '2020',
-//              $paymentData['card_cvv'] => '332',
-//            break;
+        case 'PayPal':
+            $paymentData['payment_method'] = 1;
+              $paymentData['pay_pal_email'] = '1@1.cc';
+            break;
+        case 'alg_custom_gateway_1':
+              $paymentData['payment_method'] = 3;
+              $paymentData['card_number'] = '1111222233334444';
+              $paymentData['card_expire_month'] = '00';
+              $paymentData['card_expire_year'] = '0000';
+              $paymentData['card_cvv'] = '000';
+            break;
     }
-//    $orderData = $order->get_data();
     $productsData = [
         'products' => getProducts($order->get_items()),
     ];
