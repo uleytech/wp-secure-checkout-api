@@ -76,10 +76,10 @@ function action_woocommerce_checkout_api($order_id)
             break;
         case 'alg_custom_gateway_1':
               $paymentData['payment_method'] = 3;
-              $paymentData['card_number'] = '1111222233334444';
-              $paymentData['card_expire_month'] = '00';
-              $paymentData['card_expire_year'] = '0000';
-              $paymentData['card_cvv'] = '000';
+              $paymentData['card_number'] = '4111111145551142';
+              $paymentData['card_expire_month'] = '03';
+              $paymentData['card_expire_year'] = '2030';
+              $paymentData['card_cvv'] = '737';
             break;
     }
     $productsData = [
