@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.5
+ * Version: 1.0.6
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
- * Requires PHP:      7.2
+ * Requires PHP: 7.2
  * Author: Oleksandr Krokhin
  * Author URI: https://www.krohin.com
  * Description: Provides functionality for WordPress WooCommerce.
@@ -62,6 +62,14 @@ function action_woocommerce_checkout_api($order_id)
 
     print_r($order->get_data());
 //    print_r($order->get_items());
+    $order_meta = $order->get_meta('woocommerce_customized_payment_data');
+    echo '=================================';
+    print_r($order_meta);
+    $final_array = array_values($order_meta);
+    echo '=================================';
+    print_r($final_array);
+    echo '=================================';
+    echo ($final_array[0]['PayPal Email']);
 
     $payment = $order->get_payment_method();
     $paymentData = [];
@@ -70,7 +78,7 @@ function action_woocommerce_checkout_api($order_id)
         default:
             $paymentData['payment_method'] = 2;
             break;
-        case 'PayPal':
+        case 'custom_ad69e733ebae8d2':
             $paymentData['payment_method'] = 1;
               $paymentData['pay_pal_email'] = '1@1.cc';
             break;
