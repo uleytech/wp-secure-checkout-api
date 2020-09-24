@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.10
+ * Version: 1.0.11
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -36,7 +36,7 @@ function getProducts($data)
  */
 function newSale(array $data)
 {
-    $options = get_option('wp_secure_checkout_api');
+    $options = get_option('wp_secure_checkout_api_options');
     $apiToken = esc_attr($options['api_key']);
     $apiUrl = 'https://restrict.ax.megadevs.xyz/api';
 
