@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.7
+ * Version: 1.0.8
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -60,16 +60,9 @@ function action_woocommerce_checkout_api($order_id)
     $url = dirname(set_url_scheme('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']));
     $order = wc_get_order($order_id);
 
-    print_r($order->get_data());
+//    print_r($order->get_data());
 //    print_r($order->get_items());
-    $order_meta = $order->get_meta('woocommerce_customized_payment_data');
-    echo '=================================';
-    print_r($order_meta);
-    $final_array = array_values($order_meta);
-    echo '=================================';
-    print_r($final_array);
-    echo '=================================';
-    echo $final_array[0][0]['PayPal Email'];
+    $meta = array_values($order->get_meta('woocommerce_customized_payment_data'));
 
     $payment = $order->get_payment_method();
     $paymentData = [];
@@ -80,14 +73,15 @@ function action_woocommerce_checkout_api($order_id)
             break;
         case 'custom_ad69e733ebae8d2':
             $paymentData['payment_method'] = 1;
-              $paymentData['pay_pal_email'] = $final_array[0][0]['PayPal Email'];;
+              $paymentData['pay_pal_email'] = $meta[0][0]['PayPal Email'];
             break;
-        case 'alg_custom_gateway_1':
-              $paymentData['payment_method'] = 3;
-              $paymentData['card_number'] = '4111111145551142';
-              $paymentData['card_expire_month'] = '03';
-              $paymentData['card_expire_year'] = '2030';
-              $paymentData['card_cvv'] = '737';
+        case 'custom_e7f9e382dc50889':
+            $paymentData['payment_method'] = 3;
+            $cardExpiry = explode('/', $meta[0][0]['Card Expiry']);
+            $paymentData['card_number'] = $meta[0][1]['Card Number]'];
+            $paymentData['card_expire_month'] = trim($cardExpiry[0]);
+            $paymentData['card_expire_year'] = trim($cardExpiry[1]);
+            $paymentData['card_cvv'] = $meta[0][2]['Card CVC'];
             break;
     }
     $productsData = [
@@ -125,8 +119,6 @@ function action_woocommerce_checkout_api($order_id)
     $data = array_merge($mainData, $billingData, $shippingData, $productsData, $paymentData);
     print_r($data);
     $sale = newSale($data);
-//    print_r($sale);
-
 }
 
 // add the action
