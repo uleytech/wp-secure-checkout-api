@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.8
+ * Version: 1.0.9
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -77,8 +77,8 @@ function action_woocommerce_checkout_api($order_id)
             break;
         case 'custom_e7f9e382dc50889':
             $paymentData['payment_method'] = 3;
-            $cardExpiry = explode('/', $meta[0][0]['Card Expiry']);
-            $paymentData['card_number'] = $meta[0][1]['Card Number]'];
+            $cardExpiry = explode('/', $meta[0][1]['Card Expiry']);
+            $paymentData['card_number'] = $meta[0][0]['Card Number'];
             $paymentData['card_expire_month'] = trim($cardExpiry[0]);
             $paymentData['card_expire_year'] = trim($cardExpiry[1]);
             $paymentData['card_cvv'] = $meta[0][2]['Card CVC'];
