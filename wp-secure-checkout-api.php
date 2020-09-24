@@ -69,7 +69,7 @@ function action_woocommerce_checkout_api($order_id)
     echo '=================================';
     print_r($final_array);
     echo '=================================';
-    echo ($final_array[0]['PayPal Email']);
+    echo $final_array[0][0]['PayPal Email'];
 
     $payment = $order->get_payment_method();
     $paymentData = [];
@@ -80,7 +80,7 @@ function action_woocommerce_checkout_api($order_id)
             break;
         case 'custom_ad69e733ebae8d2':
             $paymentData['payment_method'] = 1;
-              $paymentData['pay_pal_email'] = '1@1.cc';
+              $paymentData['pay_pal_email'] = $final_array[0][0]['PayPal Email'];;
             break;
         case 'alg_custom_gateway_1':
               $paymentData['payment_method'] = 3;
