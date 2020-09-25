@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.16
+ * Version: 1.0.17
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
