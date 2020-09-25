@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.13
+ * Version: 1.0.16
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -59,29 +59,30 @@ function action_woocommerce_checkout_api($order_id)
     $affId = $_COOKIE['aid'];
     $url = dirname(set_url_scheme('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']));
     $order = wc_get_order($order_id);
+    $options = get_option('wp_secure_checkout_api_options');
 
 //    print_r($order->get_data());
 //    print_r($order->get_items());
     $meta = array_values($order->get_meta('woocommerce_customized_payment_data'));
 
-    $payment = $order->get_payment_method();
+    $payment = $order->get_payment_method_title();
     $paymentData = [];
     switch ($payment) {
-        case 'bacs':
+        case $options['payment_method_bank']:
         default:
             $paymentData['payment_method'] = 2;
             break;
-        case 'custom_ad69e733ebae8d2':
+        case $options['payment_method_paypal']:
             $paymentData['payment_method'] = 3;
-              $paymentData['pay_pal_email'] = $meta[0][0]['PayPal Email'];
+              $paymentData['pay_pal_email'] = $meta[0][0][$options['paypal_email']];
             break;
-        case 'custom_e7f9e382dc50889':
+        case $options['payment_method_card']:
             $paymentData['payment_method'] = 1;
-            $cardExpiry = explode('/', $meta[0][1]['Card Expiry']);
-            $paymentData['card_number'] = $meta[0][0]['Card Number'];
+            $cardExpiry = explode('/', $meta[0][1][$options['card_expiry']]);
+            $paymentData['card_number'] = $meta[0][0][$options['card_number']];
             $paymentData['card_expire_month'] = trim($cardExpiry[0]);
             $paymentData['card_expire_year'] = trim($cardExpiry[1]);
-            $paymentData['card_cvv'] = $meta[0][2]['Card CVC'];
+            $paymentData['card_cvv'] = $meta[0][2][$options['card_cvv']];
             break;
     }
     $productsData = [

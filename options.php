@@ -25,6 +25,13 @@ function sca_register_settings()
     register_setting('wp_secure_checkout_api_options', 'wp_secure_checkout_api_options', 'wp_secure_checkout_api_options_validate');
     add_settings_section('api_settings', 'API Settings', 'wp_secure_checkout_api_section_text', 'wp_secure_checkout_api');
     add_settings_field('wp_secure_checkout_api_setting_api_key', 'API Key', 'wp_secure_checkout_api_setting_api_key', 'wp_secure_checkout_api', 'api_settings');
+    add_settings_field('wp_secure_checkout_api_setting_payment_method_bank', 'Bank wire Title', 'wp_secure_checkout_api_setting_payment_method_bank', 'wp_secure_checkout_api', 'api_settings');
+    add_settings_field('wp_secure_checkout_api_setting_payment_method_paypal', 'Paypal Title', 'wp_secure_checkout_api_setting_payment_method_paypal', 'wp_secure_checkout_api', 'api_settings');
+    add_settings_field('wp_secure_checkout_api_setting_paypal_email', 'Paypal Email', 'wp_secure_checkout_api_setting_paypal_email', 'wp_secure_checkout_api', 'api_settings');
+    add_settings_field('wp_secure_checkout_api_setting_payment_method_card', 'Card Title', 'wp_secure_checkout_api_setting_payment_method_card', 'wp_secure_checkout_api', 'api_settings');
+    add_settings_field('wp_secure_checkout_api_setting_card_number', 'Card Number', 'wp_secure_checkout_api_setting_card_number', 'wp_secure_checkout_api', 'api_settings');
+    add_settings_field('wp_secure_checkout_api_setting_card_expiry', 'Card Expiry', 'wp_secure_checkout_api_setting_card_expiry', 'wp_secure_checkout_api', 'api_settings');
+    add_settings_field('wp_secure_checkout_api_setting_card_cvv', 'Card CVV', 'wp_secure_checkout_api_setting_card_cvv', 'wp_secure_checkout_api', 'api_settings');
 }
 
 add_action('admin_init', 'sca_register_settings');
@@ -47,4 +54,46 @@ function wp_secure_checkout_api_setting_api_key()
 {
     $options = get_option('wp_secure_checkout_api_options');
     echo "<input id='wp_secure_checkout_api_setting_api_key' name='wp_secure_checkout_api_options[api_key]' type='text' value='" . esc_attr($options['api_key']) . "' />";
+}
+
+function wp_secure_checkout_api_setting_payment_method_bank()
+{
+    $options = get_option('wp_secure_checkout_api_options');
+    echo "<input id='wp_secure_checkout_api_setting_payment_method_bank' name='wp_secure_checkout_api_options[payment_method_bank]' type='text' value='" . esc_attr($options['payment_method_bank']) . "' />";
+}
+
+function wp_secure_checkout_api_setting_payment_method_paypal()
+{
+    $options = get_option('wp_secure_checkout_api_options');
+    echo "<input id='wp_secure_checkout_api_setting_payment_method_paypal' name='wp_secure_checkout_api_options[payment_method_paypal]' type='text' value='" . esc_attr($options['payment_method_paypal']) . "' />";
+}
+
+function wp_secure_checkout_api_setting_paypal_email()
+{
+    $options = get_option('wp_secure_checkout_api_options');
+    echo "<input id='wp_secure_checkout_api_setting_paypal_email' name='wp_secure_checkout_api_options[paypal_email]' type='text' value='" . esc_attr($options['paypal_email']) . "' />";
+}
+
+function wp_secure_checkout_api_setting_payment_method_card()
+{
+    $options = get_option('wp_secure_checkout_api_options');
+    echo "<input id='wp_secure_checkout_api_setting_payment_method_card' name='wp_secure_checkout_api_options[payment_method_card]' type='text' value='" . esc_attr($options['payment_method_card']) . "' />";
+}
+
+function wp_secure_checkout_api_setting_card_number()
+{
+    $options = get_option('wp_secure_checkout_api_options');
+    echo "<input id='wp_secure_checkout_api_setting_card_number' name='wp_secure_checkout_api_options[card_number]' type='text' value='" . esc_attr($options['card_number']) . "' />";
+}
+
+function wp_secure_checkout_api_setting_card_expiry()
+{
+    $options = get_option('wp_secure_checkout_api_options');
+    echo "<input id='wp_secure_checkout_api_setting_card_expiry' name='wp_secure_checkout_api_options[card_expiry]' type='text' value='" . esc_attr($options['card_expiry']) . "' />";
+}
+
+function wp_secure_checkout_api_setting_card_cvv()
+{
+    $options = get_option('wp_secure_checkout_api_options');
+    echo "<input id='wp_secure_checkout_api_setting_card_cvv' name='wp_secure_checkout_api_options[card_cvv]' type='text' value='" . esc_attr($options['card_cvv']) . "' />";
 }
