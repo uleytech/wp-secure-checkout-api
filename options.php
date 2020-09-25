@@ -43,31 +43,31 @@ function wp_secure_checkout_api_options_validate($input)
         $newinput['api_key'] = '';
     }
     $newinput['paypal_email'] = trim($input['paypal_email']);
-    if (!preg_match('/^(?=[A-Z0-9][A-Z0-9@._%+-]{5,253}+$)[A-Z0-9._%+-]{1,64}+@(?:(?=[A-Z0-9-]{1,63}+\.)[A-Z0-9]++(?:-[A-Z0-9]++)*+\.){1,8}+[A-Z]{2,63}+$/i', $newinput['paypal_email'])) {
+    if (!preg_match('/^[a-z0-9 ]+$/i', $newinput['paypal_email'])) {
         $newinput['paypal_email'] = '';
     }
     $newinput['payment_method_bank'] = trim($input['payment_method_bank']);
-    if (!preg_match('/^[a-z ]+$/i', $newinput['payment_method_bank'])) {
+    if (!preg_match('/^[a-z0-9 ]+$/i', $newinput['payment_method_bank'])) {
         $newinput['payment_method_bank'] = '';
     }
     $newinput['payment_method_paypal'] = trim($input['payment_method_paypal']);
-    if (!preg_match('/^[a-z ]+$/i', $newinput['payment_method_paypal'])) {
+    if (!preg_match('/^[a-z0-9 ]+$/i', $newinput['payment_method_paypal'])) {
         $newinput['payment_method_paypal'] = '';
     }
     $newinput['payment_method_card'] = trim($input['payment_method_card']);
-    if (!preg_match('/^[a-z ]+$/i', $newinput['payment_method_card'])) {
+    if (!preg_match('/^[a-z0-9 \/]+$/i', $newinput['payment_method_card'])) {
         $newinput['payment_method_card'] = '';
     }
     $newinput['card_number'] = trim($input['card_number']);
-    if (!preg_match('/^[0-9 ]+$/i', $newinput['card_number'])) {
+    if (!preg_match('/^[a-z0-9 ]+$/i', $newinput['card_number'])) {
         $newinput['card_number'] = '';
     }
     $newinput['card_expiry'] = trim($input['card_expiry']);
-    if (!preg_match('/^[0-9\/]+$/i', $newinput['card_expiry'])) {
+    if (!preg_match('/^[a-z0-9 \/]+$/i', $newinput['card_expiry'])) {
         $newinput['card_expiry'] = '';
     }
     $newinput['card_cvv'] = trim($input['card_cvv']);
-    if (!preg_match('/^[0-9]{3,4}$/i', $newinput['card_cvv'])) {
+    if (!preg_match('/^[a-z0-9 ]+$/i', $newinput['card_cvv'])) {
         $newinput['card_cvv'] = '';
     }
     return $newinput;
