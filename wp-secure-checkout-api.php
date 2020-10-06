@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.18
+ * Version: 1.0.20
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -121,6 +121,10 @@ function action_woocommerce_checkout_api($order_id)
 //    print_r($data);
     $sale = newSale($data);
 //    print_r($sale);
+
+    $number = json_decode($sale)['order_id'];
+    $order->set_id($number);
+    $order->save();
 }
 
 // add the action
