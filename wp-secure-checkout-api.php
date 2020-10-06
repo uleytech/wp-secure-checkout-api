@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.20
+ * Version: 1.0.21
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -123,10 +123,21 @@ function action_woocommerce_checkout_api($order_id)
 //    print_r($sale);
 
     $number = json_decode($sale)['order_id'];
-    $order->set_id($number);
-    $order->save();
+//    $order->set_id($number);
+    $order->update_meta_data('_new_order_number', $number );
+//    $order->save();
 }
 
 // add the action
 //add_action('woocommerce_after_checkout_form', 'action_woocommerce_checkout_api', 10, 1);
 add_action('woocommerce_thankyou', 'action_woocommerce_checkout_api', 10, 1);
+
+add_filter('woocommerce_order_number', function($default_order_number, \WC_Order $order) {
+    //Load in our meta value. Return it, if it's not empty.
+    $order_number = $order->get_meta('_new_order_number');
+    if(!empty($order_number)) {
+        return $order_number;
+    }
+    // use whatever the previous value was, if a plugin modified it already.
+    return $default_order_number;
+}, 10, 2);
