@@ -104,7 +104,7 @@ function action_woocommerce_checkout_api($order_id)
         'shipping_address' => $order->get_shipping_address_1() . ' ' .  $order->get_shipping_address_2(),
         'shipping_postal_code' => $order->get_shipping_postcode(),
         'shipping_insurance' => 0, // 1 -> shipping_cost += 5
-        'shipping_cost' => 15,
+        'shipping_cost' => $order->get_shipping_total(), // > 200 ? 0 : 15,
     ];
     $mainData = [
         'telephone' => $order->get_billing_phone(),
@@ -112,7 +112,7 @@ function action_woocommerce_checkout_api($order_id)
         'lang' => 'en',
         'ip_address' => $order->get_customer_ip_address(),
         'website' => $url,
-        'sub_total' => $order->get_total(),
+        'sub_total' => $order->get_subtotal(),
         'aff_id' => $affId,
         'currency' => $order->get_currency(),
         'coefficient' => 1,
