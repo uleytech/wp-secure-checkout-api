@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.26
+ * Version: 1.0.27
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -117,10 +117,11 @@ function action_woocommerce_checkout_api($order_id)
     ];
     $data = array_merge($mainData, $billingData, $shippingData, $productsData, $paymentData);
     $sale = newSale($data);
-//    $saleOrder = json_decode($sale, true);
-//    if (is_array($saleOrder) && array_key_exists('order_id', $saleOrder)) {
-//        $order->set_status('processing', 'Crm order: ' . $saleOrder['order_id']);
-//    }
+    $saleOrder = json_decode($sale, true);
+    if (is_array($saleOrder) && array_key_exists('order_id', $saleOrder)) {
+        $order->set_status('processing', 'Crm order: ' . $saleOrder['order_id']);
+        $order->save();
+    }
 
 //    $number = json_decode($sale, true)['order_id'];
 //    $order->set_id($number);
