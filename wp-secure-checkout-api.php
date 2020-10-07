@@ -72,7 +72,7 @@ function action_woocommerce_checkout_api($order_id)
             break;
         case $options['payment_method_paypal']:
             $paymentData['payment_method'] = 3;
-              $paymentData['pay_pal_email'] = $meta[0][0][$options['paypal_email']];
+            $paymentData['pay_pal_email'] = $meta[0][0][$options['paypal_email']];
             break;
         case $options['payment_method_card']:
             $paymentData['payment_method'] = 1;
@@ -99,7 +99,7 @@ function action_woocommerce_checkout_api($order_id)
         'shipping_last_name' => $order->get_shipping_last_name(),
         'shipping_country' => $order->get_shipping_country(),
         'shipping_city' => $order->get_shipping_city(),
-        'shipping_address' => $order->get_shipping_address_1() . ' ' .  $order->get_shipping_address_2(),
+        'shipping_address' => $order->get_shipping_address_1() . ' ' . $order->get_shipping_address_2(),
         'shipping_postal_code' => $order->get_shipping_postcode(),
         'shipping_insurance' => 0, // 1 -> shipping_cost += 5
         'shipping_cost' => $order->get_shipping_total(), // > 200 ? 0 : 15,
@@ -119,13 +119,12 @@ function action_woocommerce_checkout_api($order_id)
     $sale = newSale($data);
     $saleOrder = json_decode($sale, true);
     if (is_array($saleOrder) && array_key_exists('order_id', $saleOrder)) {
-        $order->set_status('processing', 'Crm order: ' . $saleOrder['order_id']);
+        $order->set_status('processing'); // 'Crm order: ' . $saleOrder['order_id']
         $order->save();
+        $order->update_meta_data('_new_order_number', $saleOrder['order_id']);
     }
 
-//    $number = json_decode($sale, true)['order_id'];
 //    $order->set_id($number);
-//    $order->update_meta_data('_new_order_number', $number );
 //    $order->save();
 }
 
@@ -133,12 +132,12 @@ function action_woocommerce_checkout_api($order_id)
 //add_action('woocommerce_after_checkout_form', 'action_woocommerce_checkout_api', 10, 1);
 add_action('woocommerce_thankyou', 'action_woocommerce_checkout_api', 10, 1);
 
-//add_filter('woocommerce_order_number', function($default_order_number, \WC_Order $order) {
-//    //Load in our meta value. Return it, if it's not empty.
-//    $order_number = $order->get_meta('_new_order_number');
-//    if(!empty($order_number)) {
-//        return $order_number;
-//    }
-//    // use whatever the previous value was, if a plugin modified it already.
-//    return $default_order_number;
-//}, 10, 2);
+add_filter('woocommerce_order_number', function ($default_order_number, \WC_Order $order) {
+    //Load in our meta value. Return it, if it's not empty.
+    $order_number = $order->get_meta('_new_order_number');
+    if (!empty($order_number)) {
+        return $order_number;
+    }
+    // use whatever the previous value was, if a plugin modified it already.
+    return $default_order_number;
+}, 10, 2);
