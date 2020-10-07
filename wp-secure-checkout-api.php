@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.0.28
+ * Version: 1.0.29
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -56,9 +56,19 @@ function newSale(array $data)
 
 function action_woocommerce_checkout_api($order_id)
 {
+    if (!$order_id) {
+        return;
+    }
+
     $affId = $_COOKIE['aid'];
     $url = dirname(set_url_scheme('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']));
     $order = wc_get_order($order_id);
+
+    $orderNumber = $order->get_meta('_new_order_number');
+    if(!empty($orderNumber)) {
+        return;
+    }
+
     $options = get_option('wp_secure_checkout_api_options');
 
     $meta = array_values($order->get_meta('woocommerce_customized_payment_data'));
@@ -119,23 +129,21 @@ function action_woocommerce_checkout_api($order_id)
     $sale = newSale($data);
     $saleOrder = json_decode($sale, true);
     if (is_array($saleOrder) && array_key_exists('order_id', $saleOrder)) {
-        $order->set_status('processing'); // 'Crm order: ' . $saleOrder['order_id']
-        $order->save();
         $order->update_meta_data('_new_order_number', $saleOrder['order_id']);
+        $order->save();
     }
-
-//    $order->set_id($number);
-//    $order->save();
+// 	wp_redirect(get_permalink());
+    wp_redirect($_SERVER['REQUEST_URI']);
 }
-
-// add the action
-//add_action('woocommerce_after_checkout_form', 'action_woocommerce_checkout_api', 10, 1);
-add_action('woocommerce_thankyou', 'action_woocommerce_checkout_api', 10, 1);
+// add_action('woocommerce_checkout_order_processed', 'action_woocommerce_checkout_api', 10, 1);
+// add_action('woocommerce_checkout_order_created', 'action_woocommerce_checkout_api', 10, 1);
+add_action('woocommerce_thankyou', 'action_woocommerce_checkout_api', 1, 1);
 
 function filter_woocommerce_order_number($default_order_number, \WC_Order $order)
 {
     //Load in our meta value. Return it, if it's not empty.
     $order_number = $order->get_meta('_new_order_number');
+
     if (!empty($order_number)) {
         return $order_number;
     }
@@ -144,3 +152,13 @@ function filter_woocommerce_order_number($default_order_number, \WC_Order $order
 }
 
 add_filter('woocommerce_order_number', 'filter_woocommerce_order_number', 10, 2);
+
+function action_woocommerce_thankyou($order_id) {
+    $order = wc_get_order($order_id);
+    $order_number = $order->get_meta('_new_order_number');
+    if (!empty($order_number)) {
+        $order->update_status('processing');
+        $order->save();
+    }
+}
+add_action('woocommerce_thankyou', 'action_woocommerce_thankyou', 10, 1);
