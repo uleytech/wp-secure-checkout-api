@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.1.0
+ * Version: 1.1.1
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -15,6 +15,8 @@ require_once __DIR__ . '/include.php';
 require_once __DIR__ . '/options.php';
 require_once __DIR__ . '/update.php';
 require_once __DIR__ . '/payment/BankWirePayment.php';
+require_once __DIR__ . '/payment/PaypalPayment.php';
+require_once __DIR__ . '/payment/CreditCardPayment.php';
 
 if (is_admin()) {
     new ScaUpdater(
@@ -44,6 +46,10 @@ function scaPaymentLink($links, $file)
     if ($file == $base) {
         $url = 'admin.php?page=wc-settings&tab=checkout&section=bankwirepayment';
         $links[] = "<a href='$url'>" . __('BankWire') . '</a>';
+        $url = 'admin.php?page=wc-settings&tab=checkout&section=paypalpayment';
+        $links[] = "<a href='$url'>" . __('Paypal') . '</a>';
+        $url = 'admin.php?page=wc-settings&tab=checkout&section=creditcardpayment';
+        $links[] = "<a href='$url'>" . __('CreditCard') . '</a>';
     }
     return $links;
 }
@@ -105,31 +111,24 @@ function action_woocommerce_checkout_api($order_id)
 
     $options = get_option('wp_secure_checkout_api_options');
 
-    $meta = array_values($order->get_meta('woocommerce_customized_payment_data'));
-
-//    $payment = $order->get_payment_method_title();
     $payment = $order->get_payment_method();
     $paymentData = [];
     switch ($payment) {
-//        case 'Payment via BankWire':
         case 'bankwirepayment':
-//        case $options['payment_method_bank']:
         default:
             $paymentData['payment_method'] = 2;
             break;
-        case 'Payment via PayPal':
-//        case $options['payment_method_paypal']:
+        case 'paypalpayment':
             $paymentData['payment_method'] = 3;
-            $paymentData['pay_pal_email'] = $meta[0][0][$options['paypal_email']];
+            $paymentData['pay_pal_email'] = $order->get_meta('_sca_paypal_email');
             break;
-        case 'Payment via Credit Card':
-//        case $options['payment_method_card']:
+        case 'creditcardpayment':
             $paymentData['payment_method'] = 1;
-            $cardExpiry = explode('/', $meta[0][1][$options['card_expiry']]);
-            $paymentData['card_number'] = $meta[0][0][$options['card_number']];
-            $paymentData['card_expire_month'] = trim($cardExpiry[0]);
-            $paymentData['card_expire_year'] = trim($cardExpiry[1]);
-            $paymentData['card_cvv'] = $meta[0][2][$options['card_cvv']];
+//            $cardExpiry = explode('/', $meta[0][1][$options['card_expiry']]);
+//            $paymentData['card_number'] = $meta[0][0][$options['card_number']];
+//            $paymentData['card_expire_month'] = trim($cardExpiry[0]);
+//            $paymentData['card_expire_year'] = trim($cardExpiry[1]);
+//            $paymentData['card_cvv'] = $meta[0][2][$options['card_cvv']];
             break;
     }
     $productsData = [
@@ -204,6 +203,8 @@ add_action('woocommerce_thankyou', 'action_woocommerce_thankyou', 10, 1);
 function addBankWirePayment($methods)
 {
     $methods[] = 'BankWirePayment';
+    $methods[] = 'PaypalPayment';
+//    $methods[] = 'CreditCardPayment';
     return $methods;
 }
 add_filter('woocommerce_payment_gateways', 'addBankWirePayment');

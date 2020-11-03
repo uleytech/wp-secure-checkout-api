@@ -21,7 +21,7 @@ class BankWirePayment extends WC_Payment_Gateway
         $this->icon = plugin_dir_url(__FILE__) . '../img/bankwire.svg';
         $this->method_title = __('BankWire Payment');
         $this->method_description = __('Internet acquiring and payment processing.');
-        $this->has_fields = true;
+        $this->has_fields = false;
         $this->supports = [
             'products'
         ];
@@ -30,38 +30,10 @@ class BankWirePayment extends WC_Payment_Gateway
         $this->enabled = $this->get_option('enabled');
         $this->title = $this->get_option('title');
         $this->description = $this->get_option('description');
-
-        // Define user set variables
-//        $this->token = $this->get_option('token');
-//        $this->test_mode = $this->get_option('test_mode');
-        //$this->stage_mode = $this->get_option('stage_mode');
-        //$this->send_order = $this->get_option('send_order');
-//        $this->tax_system = $this->get_option('tax_system');
-//        $this->tax_type = $this->get_option('tax_type');
-//        $this->success_url = $this->get_option('success_url');
-//        $this->fail_url = $this->get_option('fail_url');
-        //$this->ffd_version = $this->get_option('ffd_version');
-        //$this->ffd_paymentMethodType = $this->get_option('ffd_paymentMethodType');
-        //$this->ffd_paymentObjectType = $this->get_option('ffd_paymentObjectType');
-//        $this->pData = get_plugin_data(__FILE__);
-//        $this->mesurement_name = 'шт.';
-        // Actions
-//        add_action('valid-rbspayment-standard-ipn-reques', array($this, 'successful_request'));
-//        add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
         // Save options
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, [
             $this, 'process_admin_options'
         ]);
-        // filters
-//            add_filter('woocommerce_order_button_text', 'woo_custom_order_button_text');
-//            function woo_custom_order_button_text()
-//            {
-//                return __('Перейти к оплате', 'woocommerce');
-//            }
-//        if (!$this->is_valid_for_use()) {
-//            $this->enabled = false;
-//        }
-//        $this->callb();
     }
 
     /**
