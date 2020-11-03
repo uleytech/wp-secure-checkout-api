@@ -1,0 +1,15 @@
+{
+    "name": "uleytech/wp-secure-checkout-api",
+    "description": "WooCommerce Product Manager API",
+    "type": "plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Oleksandr Krokhin",
+            "email": "alexander@krohin.com"
+        }
+    ],
+    "require": {
+        "erusev/parsedown": "^1.7"
+    }
+}
