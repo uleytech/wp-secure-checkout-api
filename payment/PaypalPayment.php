@@ -102,23 +102,27 @@ class PaypalPayment extends WC_Payment_Gateway
             echo wpautop(wp_kses_post($this->description));
         }
         // I will echo() the form, but you can close PHP tags and print it directly in HTML
-        echo '<fieldset id="wc-' . esc_attr($this->id) . '-paypal-form" class="wc-payment-form" style="background:transparent;">';
+//        echo '<fieldset id="wc-' . esc_attr($this->id) . '-paypal-form" class="wc-payment-form" style="background:transparent;">';
 
         // Add this action hook if you want your custom payment gateway to support it
 //        do_action('woocommerce_credit_card_form_start', $this->id);
 
         // I recommend to use inique IDs, because other gateways could already use #ccNo, #expdate, #cvc
         echo '
-            <div class="form-row form-row-wide">
-                <label>Paypal Email<span class="required">*</span></label>
-                <input id="sca_paypal_email" name="sca_paypal_email" type="email" autocomplete="off">
+            <div class="form-row validate-required form-row-wide">
+                <label for="sca_paypal_email">Paypal Email 
+                    <abbr class="required" title="обязательно">*</abbr>
+                </label>
+                <span class="woocommerce-input-wrapper">
+                    <input id="sca_paypal_email" name="sca_paypal_email" type="email" autocomplete="off">
+                </span>
             </div>
             <div class="clear"></div>
 		';
 
 //        do_action('woocommerce_credit_card_form_end', $this->id);
 
-        echo '<div class="clear"></div></fieldset>';
+//        echo '<div class="clear"></div></fieldset>';
     }
 
     function validate_fields()
