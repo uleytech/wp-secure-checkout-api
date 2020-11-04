@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.1.3
+ * Version: 1.1.4
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -30,7 +30,7 @@ function scaSettingsLink($links)
 {
     $url = esc_url(add_query_arg(
         'page',
-        'wc-product-manager-api',
+        'wp-secure-checkout-api',
         get_admin_url() . 'options-general.php'
     ));
     $link[] = "<a href='$url'>" . __('Settings') . '</a>';
@@ -44,11 +44,11 @@ function scaPaymentLink($links, $file)
 {
     $base = plugin_basename(__FILE__);
     if ($file == $base) {
-        $url = 'admin.php?page=wc-settings&tab=checkout&section=bankwirepayment';
+        $url = esc_url('admin.php?page=wc-settings&tab=checkout&section=bankwirepayment');
         $links[] = "<a href='$url'>" . __('BankWire') . '</a>';
-        $url = 'admin.php?page=wc-settings&tab=checkout&section=paypalpayment';
+        $url = esc_url('admin.php?page=wc-settings&tab=checkout&section=paypalpayment');
         $links[] = "<a href='$url'>" . __('Paypal') . '</a>';
-        $url = 'admin.php?page=wc-settings&tab=checkout&section=creditcardpayment';
+        $url = esc_url('admin.php?page=wc-settings&tab=checkout&section=creditcardpayment');
         $links[] = "<a href='$url'>" . __('CreditCard') . '</a>';
     }
     return $links;
