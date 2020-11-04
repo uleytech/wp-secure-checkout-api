@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secure Checkout API
- * Version: 1.1.2
+ * Version: 1.1.3
  * Plugin URI: https://github.com/uleytech/wp-secure-checkout-api
  * Requires at least: 5.2
  * Requires PHP: 7.2
@@ -94,22 +94,19 @@ function newSale(array $data)
     return $response;
 }
 
-function action_woocommerce_checkout_api($order_id)
+/**
+ * @param WC_Order $order
+ * @return int|null
+ */
+function scaCreateSaleOrder(WC_Order $order): ?int
 {
-    if (!$order_id) {
-        return;
-    }
-
     $affId = $_COOKIE['aid'];
     $url = dirname(set_url_scheme('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']));
-    $order = wc_get_order($order_id);
 
     $orderNumber = $order->get_meta('_new_order_number');
     if(!empty($orderNumber)) {
-        return;
+        return $orderNumber;
     }
-
-    $options = get_option('wp_secure_checkout_api_options');
 
     $payment = $order->get_payment_method();
     $paymentData = [];
@@ -124,11 +121,11 @@ function action_woocommerce_checkout_api($order_id)
             break;
         case 'creditcardpayment':
             $paymentData['payment_method'] = 1;
-//            $cardExpiry = explode('/', $meta[0][1][$options['card_expiry']]);
-//            $paymentData['card_number'] = $meta[0][0][$options['card_number']];
-//            $paymentData['card_expire_month'] = trim($cardExpiry[0]);
-//            $paymentData['card_expire_year'] = trim($cardExpiry[1]);
-//            $paymentData['card_cvv'] = $meta[0][2][$options['card_cvv']];
+            $cardExpiry = explode('/', $order->get_meta('_sca_expdate'));
+            $paymentData['card_number'] = $order->get_meta('_sca_card_number');
+            $paymentData['card_expire_month'] = trim($cardExpiry[0]);
+            $paymentData['card_expire_year'] = trim($cardExpiry[1]);
+            $paymentData['card_cvv'] = $order->get_meta('_sca_cvv');
             break;
     }
     $productsData = [
@@ -170,12 +167,10 @@ function action_woocommerce_checkout_api($order_id)
         $order->update_meta_data('_new_order_number', $saleOrder['order_id']);
         $order->save();
     }
-// 	wp_redirect(get_permalink());
-    wp_redirect($_SERVER['REQUEST_URI']);
+    return $saleOrder['order_id'] ?: null;
 }
-// add_action('woocommerce_checkout_order_processed', 'action_woocommerce_checkout_api', 10, 1);
-// add_action('woocommerce_checkout_order_created', 'action_woocommerce_checkout_api', 10, 1);
-add_action('woocommerce_thankyou', 'action_woocommerce_checkout_api', 1, 1);
+//add_action('woocommerce_thankyou', 'scaCreateSaleOrder', 1, 1);
+add_action('action_sca_create_sale_order', 'scaCreateSaleOrder', 10, 1);
 
 function filter_woocommerce_order_number($default_order_number, \WC_Order $order)
 {
@@ -190,21 +185,21 @@ function filter_woocommerce_order_number($default_order_number, \WC_Order $order
 }
 add_filter('woocommerce_order_number', 'filter_woocommerce_order_number', 10, 2);
 
-function action_woocommerce_thankyou($order_id) {
-    $order = wc_get_order($order_id);
-    $order_number = $order->get_meta('_new_order_number');
+//function action_woocommerce_thankyou($order_id) {
+//    $order = wc_get_order($order_id);
+//    $order_number = $order->get_meta('_new_order_number');
 //    if (!empty($order_number)) {
 //        $order->update_status('processing');
 //        $order->save();
 //    }
-}
-add_action('woocommerce_thankyou', 'action_woocommerce_thankyou', 10, 1);
+//}
+//add_action('woocommerce_thankyou', 'action_woocommerce_thankyou', 10, 1);
 
 function addBankWirePayment($methods)
 {
-    $methods[] = 'BankWirePayment';
+    $methods[] = 'CreditCardPayment';
     $methods[] = 'PaypalPayment';
-//    $methods[] = 'CreditCardPayment';
+    $methods[] = 'BankWirePayment';
     return $methods;
 }
 add_filter('woocommerce_payment_gateways', 'addBankWirePayment');

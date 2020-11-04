@@ -76,10 +76,15 @@ class BankWirePayment extends WC_Payment_Gateway
         global $woocommerce;
         $order = new WC_Order($order_id);
 
-        // Mark as on-hold (we're awaiting the cheque)
-        $order->update_status('on-hold', __('Awaiting offline payment', 'woocommerce'));
+        do_action('action_sca_create_sale_order', $order);
 
-        // Remove cart
+        $orderNumber = $order->get_meta('_new_order_number');
+        if ($orderNumber) {
+            $order->update_status('on-hold', __('Awaiting offline payment', 'woocommerce'));
+        } else {
+            $order->update_status('failed', __('Failed payment', 'woocommerce'));
+        }
+
         $woocommerce->cart->empty_cart();
 
         // Return thankyou redirect

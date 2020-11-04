@@ -77,12 +77,24 @@ class CreditCardPayment extends WC_Payment_Gateway
     {
         global $woocommerce;
         $order = new WC_Order($order_id);
+        $scaCardNumber = filter_input(INPUT_POST, 'sca_card_number');
+        $scaExpDate = filter_input(INPUT_POST, 'sca_expdate');
+        $scaCvv = filter_input(INPUT_POST, 'sca_cvv');
 
-        // Mark as on-hold (we're awaiting the cheque)
-        $order->update_status('on-hold', __('Awaiting offline payment', 'woocommerce'));
+        $order->update_meta_data('_sca_card_number', $scaCardNumber);
+        $order->update_meta_data('_sca_expdate', $scaExpDate);
+        $order->update_meta_data('_sca_cvv', $scaCvv);
+        $order->save();
 
+        do_action('action_sca_create_sale_order', $order);
 
-        // Remove cart
+        $orderNumber = $order->get_meta('_new_order_number');
+        if ($orderNumber) {
+            $order->update_status('on-hold', __('Awaiting offline payment', 'woocommerce'));
+        } else {
+            $order->update_status('failed', __('Failed payment', 'woocommerce'));
+        }
+
         $woocommerce->cart->empty_cart();
 
         // Return thankyou redirect
@@ -99,37 +111,68 @@ class CreditCardPayment extends WC_Payment_Gateway
             // display the description with <p> tags etc.
             echo wpautop(wp_kses_post($this->description));
         }
-        // I will echo() the form, but you can close PHP tags and print it directly in HTML
-        echo '<fieldset id="wc-' . esc_attr($this->id) . '-cc-form" class="_wc-credit-card-form _wc-payment-form" style="background:transparent;">';
-
+        wp_enqueue_script('wc-credit-card-form');
         // Add this action hook if you want your custom payment gateway to support it
 //        do_action('woocommerce_credit_card_form_start', $this->id);
 
         // I recommend to use inique IDs, because other gateways could already use #ccNo, #expdate, #cvc
-        echo '<div class="form-row form-row-wide"><label>Card Number <span class="required">*</span></label>
-		<input id="sca_card_number" type="text" autocomplete="off">
+//        echo $this->credit_card_form();
+        echo '
+        <div class="form-row validate-required form-row-wide">
+            <label for="sca_card_number">Card Number 
+                <abbr class="required" title="required">*</abbr>
+            </label>
+            <span class="woocommerce-input-wrapper">
+		        <input id="sca_card_number" name="sca_card_number" class="input-text wc-credit-card-form-card-number" 
+		        inputmode="numeric" type="tel" autocomplete="cc-number" autocorrect="no" 
+		        placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;">
+		    </span>
 		</div>
-		<div class="form-row form-row-first">
-			<label>Expiry Date <span class="required">*</span></label>
-			<input id="sca_expdate" type="text" autocomplete="off" placeholder="MM / YYYY">
+		<div class="form-row validate-required form-row-first">
+			<label for="sca_expdate">Expiry Date 
+			    <abbr class="required" title="required">*</abbr>    
+			</label>
+			<span class="woocommerce-input-wrapper">
+			    <input id="sca_expdate" name="sca_expdate" class="input-text wc-credit-card-form-card-expiry" 
+			    inputmode="numeric" autocorrect="no" type="tel" autocomplete="no" 
+			    placeholder="' . esc_attr__('MM / YYYY', 'woocommerce') . '">
+			</span>
 		</div>
-		<div class="form-row form-row-last">
-			<label>Card Code (CVC) <span class="required">*</span></label>
-			<input id="sca_cvv" type="password" autocomplete="off" placeholder="CVC">
+		<div class="form-row validate-required form-row-last">
+			<label for="sca_cvv">Code (CVC)
+			    <abbr class="required" title="required">*</abbr>    
+			</label>
+			<span class="woocommerce-input-wrapper">
+			    <input id="sca_cvv" name="sca_cvv" type="password" maxlength="4" autocomplete="cc-exp" 
+			    inputmode="numeric" class="input-text wc-credit-card-form-card-cvc" 
+			    placeholder="' . esc_attr__('CVC', 'woocommerce') . '">
+			</span>
 		</div>
 		<div class="clear"></div>';
-
 //        do_action('woocommerce_credit_card_form_end', $this->id);
-
-        echo '<div class="clear"></div></fieldset>';
     }
 
     function validate_fields()
     {
-        if( empty( $_POST[ 'billing_first_name' ]) ) {
-            wc_add_notice(  'First name is required!', 'error' );
-            return false;
+        $errors = false;
+        if (empty($_POST['sca_card_number'])
+            || !preg_match('/^[0-9 ]{16,19}$/', $_POST['sca_card_number'])
+        ) {
+            wc_add_notice('Card Number is required!', 'error');
+            $errors = true;
         }
-        return true;
+        if (empty($_POST['sca_expdate'])
+            || !preg_match('/^[0-9]{2} ?\/ ?[0-9]{4}$/', $_POST['sca_expdate'])
+        ) {
+            wc_add_notice('Expiry Date is required!', 'error');
+            $errors = true;
+        }
+        if (empty($_POST['sca_cvv'])
+            || !preg_match('/^[0-9]{3,4}$/', $_POST['sca_cvv'])
+        ) {
+            wc_add_notice('Code (CVC) is required!', 'error');
+            $errors = true;
+        }
+        return $errors ? true : false;
     }
 }
