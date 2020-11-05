@@ -123,7 +123,7 @@ class CreditCardPayment extends WC_Payment_Gateway
                 <abbr class="required" title="required">*</abbr>
             </label>
             <span class="woocommerce-input-wrapper">
-		        <input id="sca_card_number" name="sca_card_number" maxlength="19" class="input-text wc-credit-card-form-card-number" 
+		        <input id="sca_card_number" name="sca_card_number" maxlength="23" class="input-text wc-credit-card-form-card-number" 
 		        inputmode="numeric" type="tel" autocomplete="cc-number" autocorrect="no" 
 		        placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;">
 		    </span>
@@ -156,7 +156,7 @@ class CreditCardPayment extends WC_Payment_Gateway
     {
         $errors = false;
         if (empty($_POST['sca_card_number'])
-            || !preg_match('/^[0-9 ]{16,19}$/', $_POST['sca_card_number'])
+            || !preg_match('/^[0-9 ]{16,23}$/', $_POST['sca_card_number'])
         ) {
             wc_add_notice('Card Number is required!', 'error');
             $errors = true;
