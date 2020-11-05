@@ -1,6 +1,6 @@
 {
     "name": "uleytech/wp-secure-checkout-api",
-    "description": "WooCommerce Product Manager API",
+    "description": "WooCommerce Secure Checkout API",
     "type": "plugin",
     "license": "MIT",
     "authors": [

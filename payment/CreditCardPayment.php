@@ -123,7 +123,7 @@ class CreditCardPayment extends WC_Payment_Gateway
                 <abbr class="required" title="required">*</abbr>
             </label>
             <span class="woocommerce-input-wrapper">
-		        <input id="sca_card_number" name="sca_card_number" class="input-text wc-credit-card-form-card-number" 
+		        <input id="sca_card_number" name="sca_card_number" maxlength="19" class="input-text wc-credit-card-form-card-number" 
 		        inputmode="numeric" type="tel" autocomplete="cc-number" autocorrect="no" 
 		        placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;">
 		    </span>
@@ -166,6 +166,20 @@ class CreditCardPayment extends WC_Payment_Gateway
         ) {
             wc_add_notice('Expiry Date is required!', 'error');
             $errors = true;
+        }
+        if (isset($_POST['sca_expdate'])) {
+            $scaExpDate = explode('/', $_POST['sca_expdate']);
+            if ((int)$scaExpDate[0] < 1
+                || (int)$scaExpDate[0] > 12
+                || (int)$scaExpDate[0] < (int)date('m')
+            )  {
+                wc_add_notice('Expiry Month incorrect!', 'error');
+                $errors = true;
+            }
+            if ((int)$scaExpDate[1] < (int)date('Y')) {
+                wc_add_notice('Expiry Year incorrect!', 'error');
+                $errors = true;
+            }
         }
         if (empty($_POST['sca_cvv'])
             || !preg_match('/^[0-9]{3,4}$/', $_POST['sca_cvv'])
